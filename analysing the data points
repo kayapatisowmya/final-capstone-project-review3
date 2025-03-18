@@ -1,0 +1,29 @@
+tempData = data(:, 1);
+humidityData = data(:, 2); 
+if isempty(tempData) || isempty(humidityData)
+disp('No data available for analysis.');
+return;
+end
+tempMean = mean(tempData);
+tempMedian = median(tempData);
+tempMax = max(tempData);
+tempMin = min(tempData);
+tempStd = std(tempData);
+humidityMean = mean(humidityData);
+humidityMedian = median(humidityData);
+humidityMax = max(humidityData);
+humidityMin = min(humidityData);
+humidityStd = std(humidityData);disp(['Standard Deviation: ', num2str(humidityStd)]);
+disp('Temperature Data Analysis:');
+disp(['Mean: ', num2str(tempMean)]);
+disp(['Median: ', num2str(tempMedian)]);
+disp(['Maximum: ', num2str(tempMax)]);
+disp(['Minimum: ', num2str(tempMin)]);
+disp(['Standard Deviation: ', num2str(tempStd)]);
+disp(' '); 
+disp('Humidity Data Analysis:');
+disp(['Mean: ', num2str(humidityMean)]);
+disp(['Median: ', num2str(humidityMedian)]);
+disp(['Maximum: ', num2str(humidityMax)]);
+disp(['Minimum: ', num2str(humidityMin)]);
+
