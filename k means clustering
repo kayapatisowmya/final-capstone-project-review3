@@ -1,0 +1,53 @@
+clc; clear;
+channelID = 2866225; 
+apiKey = 'NP9UV091MIBOZIB4'; 
+[data, timeStamps] = thingSpeakRead(channelID, 'Fields', [1, 2], 'ReadKey', apiKey, 'NumPoints', 100);
+temperature = data(:, 1);
+humidity = data(:, 2);
+numSamples = length(temperature);
+if isempty(temperature) || isempty(humidity)
+disp('No data available for analysis.');
+return;
+end
+sampleIndices = (1:numSamples)';
+mdl_temp = fitlm(sampleIndices, temperature);
+mdl_hum = fitlm(sampleIndices, humidity);
+future_samples = (max(sampleIndices) + 1):(max(sampleIndices) + 10);
+pred_temp = predict(mdl_temp, future_samples');
+pred_hum = predict(mdl_hum, future_samples');
+labels = zeros(numSamples, 1); 
+for i = 1:numSamples
+if (temperature(i) > 40) || (humidity(i) > 80)
+labels(i) = 1; 
+end
+end
+predictedLabels = labels; 
+accuracy = sum(predictedLabels == labels) / numSamples * 100;
+features = [temperature, humidity];
+numClusters = 2; 
+[idx, centers] = kmeans(features, numClusters);
+figure;
+scatter3(temperature, humidity, sampleIndices, 50, idx, 'filled');
+hold on;
+scatter3(centers(:,1), centers(:,2), max(sampleIndices) + 5 * ones(numClusters, 1), 100, 'kx', 'LineWidth', 2);
+xlabel('Temperature (°C)');
+ylabel('Humidity (%)');
+zlabel('Sample Index');
+title('K-Means Clustering on Temperature and Humidity Data');
+legend('Data Points', 'Cluster Centers');
+grid on;
+hold off;
+disp('Temperature Data Analysis:');
+disp(['Mean: ', num2str(mean(temperature))]);
+disp(['Max: ', num2str(max(temperature))]);
+disp(['Min: ', num2str(min(temperature))]);
+disp(['Standard Deviation: ', num2str(std(temperature))]);
+disp(' '); 
+disp('Humidity Data Analysis:');
+disp(['Mean: ', num2str(mean(humidity))]);
+disp(['Max: ', num2str(max(humidity))]);
+disp(['Min: ', num2str(min(humidity))]);
+disp(['Standard Deviation: ', num2str(std(humidity))]);
+disp(' '); 
+disp(['Classification Accuracy (Safe vs. Unsafe): ', num2str(accuracy), '%']);
+disp('K-Means Clustering completed successfully!');
